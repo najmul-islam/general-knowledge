@@ -1,14 +1,16 @@
-import { Routes, Route } from "react-router-dom";
-import HomePage from "./pages/HomePage";
+import { BrowserRouter } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "bootstrap/dist/css/bootstrap.css";
+import "react-toastify/dist/ReactToastify.css";
+import Router from "./routers/router";
 
 const App = () => {
   return (
     <>
-      <h1>Hello Wrold</h1>
-      <hr />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-      </Routes>
+      <BrowserRouter>
+        <Router />
+      </BrowserRouter>
+      <ToastContainer />
     </>
   );
 };
