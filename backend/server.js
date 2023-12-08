@@ -14,8 +14,6 @@ app.use(express.urlencoded({ extended: false }));
 
 // routes
 app.use("/api", require("./routes/userRoute"));
-app.use("/api", require("./routes/categoryRoute"));
-app.use("/api", require("./routes/subcategoryRoute"));
 app.use("/api", require("./routes/subjectRoute"));
 app.use("/api", require("./routes/gkRoute"));
 

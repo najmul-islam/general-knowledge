@@ -6,22 +6,32 @@ const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      require: true,
+      required: true,
       unique: true,
     },
     email: {
       type: String,
-      require: true,
       unique: true,
+      required: true,
+      trim: true,
+      lowercase: true,
+      match: /^\S+@\S+\.\S+$/,
     },
     password: {
       type: String,
-      require: true,
+      required: true,
     },
+    bookmark: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "Subject",
+      },
+    ],
     role: {
       type: String,
-      enum: ["ADMIN", "MODERATOR", "USER"],
-      default: "USER",
+      enum: ["admin", "moderator", "user"],
+      default: "user",
     },
   },
   {
@@ -37,7 +47,7 @@ userSchema.pre("save", async function (next) {
       this.password = handedPassword;
 
       if (this.email === process.env.ADMIN_EMAIL.toLowerCase()) {
-        this.role = "ADMIN";
+        this.role = "admin";
       }
       next();
     }

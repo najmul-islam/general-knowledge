@@ -19,14 +19,24 @@ const getSingleGk = asyncHandler(async (req, res) => {
 
 // create gk
 const createGk = asyncHandler(async (req, res) => {
-  const { question, answer, qna, table } = req.body;
+  const { question, answer, subject } = req.body;
 
-  if (!question && !answer && !qna && !table) {
+  if (!question && !answer) {
     res.status(400);
     throw new Error("Please give question and answer");
   }
 
-  const newGK = await GK.create(req.body);
+  const isEndsWithQuestionMark = question.trim().endsWith("?");
+  const isEndsWithFullstopMark = answer.trim().endsWith("।");
+
+  const updatedQuestion = isEndsWithQuestionMark ? question : `${question}?`;
+  const updatedAnswer = isEndsWithFullstopMark ? answer : `${answer}।`;
+
+  const newGK = await GK.create({
+    question: updatedQuestion,
+    answer: updatedAnswer,
+    subject,
+  });
 
   res.status(200).json(newGK);
 });

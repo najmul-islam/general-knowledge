@@ -1,17 +1,15 @@
-const { Schema, model } = require("mongoose");
+const mongoose = require("mongoose");
 
-const subjectSchema = new Schema(
+const subjectSchema = new mongoose.Schema(
   {
-    category: {
-      type: Schema.Types.ObjectId,
-      ref: "Category",
-    },
-    subcategory: {
-      type: Schema.Types.ObjectId,
-      ref: "Subcategory",
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
     },
     title: {
       type: String,
+      trim: true,
     },
     description: {
       type: String,
@@ -20,4 +18,4 @@ const subjectSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = model("Subject", subjectSchema);
+module.exports = mongoose.model("Subject", subjectSchema);

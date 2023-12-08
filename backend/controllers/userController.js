@@ -80,7 +80,7 @@ const updateUserRole = asyncHandler(async (req, res) => {
     throw new Error("Please give a role and id");
   }
 
-  if (role === "ADMIN") {
+  if (role === "admin") {
     res.status(401);
     throw new Error("don't make admin");
   }
