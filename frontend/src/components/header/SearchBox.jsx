@@ -3,7 +3,6 @@ import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import { Box } from "@mui/material";
 import { useFormik } from "formik";
-import { useSearchGkQuery } from "../../redux/features/gk/gkApi";
 import { useNavigate } from "react-router-dom";
 
 const SearchDiv = styled("form")(({ theme }) => ({

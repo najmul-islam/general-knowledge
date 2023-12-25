@@ -5,7 +5,7 @@ import { useState } from "react";
 
 const Search = () => {
   const [page, setPage] = useState(1);
-  const [searchParams, serSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   const { data, isLoading, isError, error } = useSearchGkQuery({
     page,
