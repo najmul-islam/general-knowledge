@@ -3,7 +3,7 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 
 //check user
-const isAuth = asyncHandler(async (req, res, next) => {
+const isUser = asyncHandler(async (req, res, next) => {
   let token;
 
   if (
@@ -36,7 +36,7 @@ const isAuth = asyncHandler(async (req, res, next) => {
 
 //check moderator
 const isModerator = asyncHandler(async (req, res, next) => {
-  if (req.user.role === "MODERATOR") {
+  if (req.user.role === "moderator") {
     return next();
   } else {
     res.status(401);
@@ -46,7 +46,7 @@ const isModerator = asyncHandler(async (req, res, next) => {
 
 //check admin
 const isAdmin = asyncHandler(async (req, res, next) => {
-  if (req.user.role === "ADMIN") {
+  if (req.user.role === "admin") {
     return next();
   } else {
     res.status(401);
@@ -54,4 +54,4 @@ const isAdmin = asyncHandler(async (req, res, next) => {
   }
 });
 
-module.exports = { isAuth, isAdmin, isModerator };
+module.exports = { isUser, isAdmin, isModerator };

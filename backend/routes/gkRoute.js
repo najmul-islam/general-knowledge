@@ -4,30 +4,29 @@ const router = express.Router();
 const {
   getAllGk,
   getSingleGk,
+  searchGk,
   createGk,
   updateGk,
   deleteGk,
 } = require("../controllers/gkController");
 
-const {
-  isAuth,
-  isModerator,
-  isAdmin,
-} = require("../middlewares/authMiddleware");
+const { isUser } = require("../middlewares/authMiddleware");
 
 // public route
-router.route("/gk").get(getAllGk);
-router.route("/gk/:id").get(getSingleGk);
-
-// moderator route
-router.route("/moderator/gk", isAuth, isModerator).post(createGk);
+router.route("/gk").get(getAllGk).post(isUser, createGk);
+router.route("/gk/searchGk").get(searchGk);
 router
-  .route("/moderator/:id", isAuth, isModerator)
-  .put(updateGk)
-  .delete(deleteGk);
+  .route("/gk/:id")
+  .get(getSingleGk)
+  .put(isUser, updateGk)
+  .delete(isUser, deleteGk);
+
+// user route
+// router.route("/moderator/gk", isAuth).post(createGk);
+// router.route("/moderator/:id", isAuth).put(updateGk).delete(deleteGk);
 
 // admin route
-router.route("/admin/gk", isAuth, isAdmin).post(createGk);
-router.route("/admin/gk/:id", isAuth, isAdmin).put(updateGk).delete(deleteGk);
+// router.route("/admin/gk", isUser, isAdmin).post(createGk);
+// router.route("/admin/gk/:id", isUser, isAdmin).put(updateGk).delete(deleteGk);
 
 module.exports = router;

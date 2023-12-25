@@ -6,22 +6,32 @@ const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      require: true,
+      required: true,
       unique: true,
     },
     email: {
       type: String,
-      require: true,
       unique: true,
+      required: true,
+      trim: true,
+      lowercase: true,
+      match: /^\S+@\S+\.\S+$/,
     },
     password: {
       type: String,
-      require: true,
+      required: true,
     },
+    bookmark: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "Subject",
+      },
+    ],
     role: {
       type: String,
-      enum: ["ADMIN", "MODERATOR", "USER"],
-      default: "USER",
+      enum: ["admin", "moderator", "user"],
+      default: "user",
     },
   },
   {
@@ -33,14 +43,30 @@ userSchema.pre("save", async function (next) {
   try {
     if (this.isNew) {
       const salt = await bcrypt.genSalt(10);
-      const handedPassword = await bcrypt.hash(this.password, salt);
-      this.password = handedPassword;
+      const hashedPassword = await bcrypt.hash(this.password, salt);
+      this.password = hashedPassword;
 
       if (this.email === process.env.ADMIN_EMAIL.toLowerCase()) {
-        this.role = "ADMIN";
+        this.role = "admin";
       }
       next();
     }
+  } catch (error) {
+    next(error);
+  }
+});
+
+userSchema.pre("findOneAndUpdate", async function (next) {
+  try {
+    const update = this.getUpdate();
+    console.log("update", update);
+    if (update.password) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(update.password, salt);
+
+      update.password = hashedPassword;
+    }
+    next();
   } catch (error) {
     next(error);
   }
@@ -52,6 +78,10 @@ userSchema.methods.isValidPassword = async function (password) {
   } catch (error) {
     throw new Error(error.message);
   }
+};
+
+userSchema.methods.matchPassword = async function (newPassword) {
+  return await bcrypt.compare(newPassword, this.password);
 };
 
 userSchema.methods.generateToken = function () {
