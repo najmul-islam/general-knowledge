@@ -43,8 +43,8 @@ userSchema.pre("save", async function (next) {
   try {
     if (this.isNew) {
       const salt = await bcrypt.genSalt(10);
-      const handedPassword = await bcrypt.hash(this.password, salt);
-      this.password = handedPassword;
+      const hashedPassword = await bcrypt.hash(this.password, salt);
+      this.password = hashedPassword;
 
       if (this.email === process.env.ADMIN_EMAIL.toLowerCase()) {
         this.role = "admin";
@@ -56,12 +56,32 @@ userSchema.pre("save", async function (next) {
   }
 });
 
+userSchema.pre("findOneAndUpdate", async function (next) {
+  try {
+    const update = this.getUpdate();
+    console.log("update", update);
+    if (update.password) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(update.password, salt);
+
+      update.password = hashedPassword;
+    }
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
 userSchema.methods.isValidPassword = async function (password) {
   try {
     return await bcrypt.compare(password, this.password);
   } catch (error) {
     throw new Error(error.message);
   }
+};
+
+userSchema.methods.matchPassword = async function (newPassword) {
+  return await bcrypt.compare(newPassword, this.password);
 };
 
 userSchema.methods.generateToken = function () {

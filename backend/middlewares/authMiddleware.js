@@ -3,7 +3,7 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 
 //check user
-const isAuth = asyncHandler(async (req, res, next) => {
+const isUser = asyncHandler(async (req, res, next) => {
   let token;
 
   if (
@@ -54,4 +54,4 @@ const isAdmin = asyncHandler(async (req, res, next) => {
   }
 });
 
-module.exports = { isAuth, isAdmin, isModerator };
+module.exports = { isUser, isAdmin, isModerator };

@@ -4,31 +4,56 @@ const Gk = require("../models/gkModel");
 
 // get all Subject
 const getAllSubject = asyncHandler(async (req, res) => {
-  const subjects = await Subject.find({});
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 50;
+  const skip = (page - 1) * limit;
 
-  res.status(200).json(subjects);
+  const subjects = await Subject.find({}).skip(skip).limit(limit);
+  const totalPage = Math.ceil((await Subject.countDocuments()) / limit);
+  res.status(200).json({ subjects, totalPage });
 });
 
 //get single Subject
 const getSingleSubject = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  const subject = await Subject.findById({ _id: id });
-  const gk = await Gk.find({ subject: id });
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 50;
+  const skip = (page - 1) * limit;
 
-  res.status(200).json({ subject, gk });
+  const subject = await Subject.findById({ _id: id });
+  const gks = await Gk.find({ subjects: id }).skip(skip).limit(limit);
+  const totalPage = Math.ceil(
+    (await Gk.countDocuments({ subjects: id })) / limit
+  );
+
+  res.status(200).json({ subject, gks, totalPage });
 });
 
 // create Subject
 const createSubject = asyncHandler(async (req, res) => {
-  const { title } = req.body;
+  const { title, privacy } = req.body;
 
   if (!title) {
     res.status(400);
     throw new Error("Please give title");
   }
 
-  const newSubject = await Subject.create(req.body);
+  const isEndsWithFullstopMark = title.trim().endsWith("।");
+  const updatedTitle = isEndsWithFullstopMark ? title : `${title}।`;
+
+  const isTitleExist = await Subject.findOne({ title: updatedTitle });
+
+  if (isTitleExist) {
+    res.status(400);
+    throw new Error("Subject with this title already exists");
+  }
+
+  const newSubject = await Subject.create({
+    user: req.user._id,
+    title: updatedTitle,
+    privacy,
+  });
 
   res.status(200).json(newSubject);
 });

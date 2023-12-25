@@ -8,11 +8,12 @@ const gkSchema = new mongoose.Schema(
       required: true,
       ref: "User",
     },
-    subject: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "Subject",
-    },
+    subjects: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Subject",
+      },
+    ],
     question: {
       type: String,
       unique: true,

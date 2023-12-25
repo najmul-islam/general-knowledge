@@ -11,8 +11,10 @@ const subjectSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    description: {
+    privacy: {
       type: String,
+      enum: ["private", "public"],
+      default: "private",
     },
   },
   { timestamps: true }
