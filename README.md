@@ -1,4 +1,4 @@
-### General Knowledge Repository
+### General Knowledge
 Welcome to the General Knowledge Repository, your go-to resource for expanding your understanding across a wide range of topics. This repository is designed to curate and share insightful content covering diverse subjects, making it a valuable hub for learners and enthusiasts alike.
 ### Key Features:
 - **User Accounts**: Sign up and create a personalized account. Easily update account details including name and password for a seamless experience.
