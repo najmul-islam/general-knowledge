@@ -5,7 +5,16 @@ import { useState } from "react";
 const AllGk = () => {
   const [page, setPage] = useState(1);
   const { data, isLoading, isError, error } = useGetAllGkQuery(page);
-  console.log(data);
+
+  if (isError) {
+    return (
+      <Box sx={{ padding: 2, textAlign: "center" }}>
+        <Typography variant="h6" color="error">
+          {error?.data?.message || "Something went wrong!"}
+        </Typography>
+      </Box>
+    );
+  }
   return (
     <>
       {isLoading ? (

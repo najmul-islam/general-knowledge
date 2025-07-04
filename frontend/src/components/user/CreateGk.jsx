@@ -29,8 +29,9 @@ const CreateGk = () => {
 
   // rtk
   const [postGk, { isError, isSuccess, error }] = usePostGkMutation();
-  const { data: allSubject, isLoading } = useGetAllSubjectQuery();
+  const { data, isLoading } = useGetAllSubjectQuery();
 
+  console.log("allSubject", data);
   // form value
   const initialValues = {
     question: "",
@@ -163,7 +164,6 @@ const CreateGk = () => {
                 </FormHelperText>
               )}
             </Stack>
-
             <Stack spacing={1} marginBottom={3}>
               <InputLabel htmlFor="answer">Answer*</InputLabel>
               <OutlinedInput
@@ -189,23 +189,48 @@ const CreateGk = () => {
               <InputLabel htmlFor="subjects">Select Subjects*</InputLabel>
               <Autocomplete
                 multiple
+                freeSolo
                 id="checkboxes-tags-demo"
-                options={allSubject}
-                value={values.subjects._id}
+                loading={isLoading}
+                options={data?.subjects || []}
+                getOptionLabel={(option) =>
+                  typeof option === "string" ? option : option.title
+                }
+                filterSelectedOptions
+                value={(data?.subjects || [])
+                  .filter((subject) => values.subjects.includes(subject._id))
+                  .concat(
+                    // Add any custom strings (new subjects) that are not in the list
+                    values.subjects.filter(
+                      (idOrTitle) =>
+                        typeof idOrTitle === "string" &&
+                        !(data?.subjects || []).some(
+                          (subject) => subject._id === idOrTitle
+                        )
+                    )
+                  )}
                 onChange={(event, newValues) => {
+                  // Map to IDs for existing, or keep string for new
                   const selectedIds = newValues.map(
-                    (selectedItem) => selectedItem._id
+                    (item) =>
+                      typeof item === "string"
+                        ? item // new subject as string
+                        : item._id // existing subject
                   );
                   setFieldValue("subjects", selectedIds);
                 }}
                 disableCloseOnSelect
-                getOptionLabel={(option) => option.title}
                 isOptionEqualToValue={(option, value) =>
-                  option?.title === value?.title
+                  (typeof option === "string" ? option : option._id) ===
+                  (typeof value === "string" ? value : value._id)
                 }
-                noOptionsText={"No available players dayum"}
+                noOptionsText={"No available subjects"}
                 renderOption={(props, option, { selected }) => (
-                  <Box component="li" {...props} key={option._id}>
+                  <Box
+                    component="li"
+                    {...props}
+                    key={typeof option === "string" ? option : option._id}
+                  >
                     <Checkbox
                       icon={<CheckBoxOutlineBlank fontSize="small" />}
                       checkedIcon={<CheckBox fontSize="small" />}
@@ -213,7 +238,7 @@ const CreateGk = () => {
                       checked={selected}
                       name="subjects"
                     />
-                    {option.title}
+                    {typeof option === "string" ? option : option.title}
                   </Box>
                 )}
                 renderInput={(params) => (
