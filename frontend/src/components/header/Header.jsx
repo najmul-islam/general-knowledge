@@ -167,6 +167,9 @@ const Header = () => {
                     horizontal: "right",
                   }}
                   keepMounted
+                  slotProps={{
+                    paper: { sx: { width: 250 } },
+                  }}
                   open={Boolean(anchorElUser)}
                   onClose={() => handleUserMenu()}
                 >
